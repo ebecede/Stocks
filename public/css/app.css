@@ -1,4 +1,105 @@
 /* Warna biru muda untuk navbar */
 .bg-lightblue {
-    background-color: #87CEFA !important; /* Light Blue */
+    background-color: #CFF4FC !important; /* Light Blue */
+}
+
+.btn-white {
+    background-color: #374B8C;
+    color: white;
+    border: 1px solid #DDE1F0;
+    border-radius: 12px;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-white:hover {
+    background-color: #99C5F2;
+    transition: background-color 0.3s ease;
+    border: 1px solid #DDE1F0;
+}
+
+.btn-lightblue {
+    background-color: #99c5f2;
+    color: black;
+    border: 1px solid #dde1f0;
+    padding: 5px 10px;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-lightblue:hover {
+    background-color: #091954;
+    transition: background-color 0.3s ease;
+    color: white;
+    border: 1px solid #dde1f0;
+}
+
+.btn-darkblue {
+    background-color: #091954;
+    color: white;
+    border: 1px solid #DDE1F0;
+    padding: 5px 10px;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-darkblue:hover {
+    background-color: #99C5F2;
+    transition: background-color 0.3s ease;
+    border: 1px solid #DDE1F0;
+}
+
+.btn-red {
+    background-color: red;
+    color: white;
+    border: 1px solid #DDE1F0;
+    padding: 5px 10px;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-red:hover {
+    background-color: red;
+    transition: background-color 0.3s ease;
+    border: 1px solid #DDE1F0;
+}
+
+.btn-green {
+    background-color: green;
+    color: white;
+    border: 1px solid #DDE1F0;
+    padding: 5px 10px;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-green:hover {
+    background-color: green;
+    transition: background-color 0.3s ease;
+    border: 1px solid #DDE1F0;
+}
+
+.btn-yellow {
+    background-color: chocolate;
+    color: white;
+    border: 1px solid #DDE1F0;
+    padding: 5px 10px;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-yellow:hover {
+    background-color: coral;
+    transition: background-color 0.3s ease;
+    border: 1px solid #DDE1F0;
+}
+
+.table-custom {
+    background-color: grey !important; /* Highlight warna kuning */
 }

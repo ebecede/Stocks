@@ -7,19 +7,48 @@ use Illuminate\Http\Request;
 
 class StockController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $stocks = Stock::with(['transactions' => function ($query) {
-            $query->orderBy('id', 'asc');
-        }])->get();
+        // Ambil ID saham yang dipilih dari request
+        $selectedStockId = $request->input('stock_id');
+
+        if ($selectedStockId) {
+            // Jika ada filter, ambil hanya saham yang dipilih
+            $stocks = Stock::with(['transactions' => function ($query) {
+                $query->orderBy('id', 'asc');
+            }])->where('id', $selectedStockId)->get();
+        } else {
+            // Jika tidak ada filter, ambil semua saham
+            $stocks = Stock::with(['transactions' => function ($query) {
+                $query->orderBy('id', 'asc');
+            }])->get();
+        }
 
         // Hitung ulang data total untuk setiap stock
         $stocks->each(function ($stock) {
             $stock->updateTotals();
         });
 
-        return view('layout', compact('stocks'));
+        // Ambil semua saham untuk dropdown
+        $allStocks = Stock::all();
+
+        // Kirim data saham yang terfilter dan semua saham untuk dropdown
+        return view('layout', compact('stocks', 'allStocks', 'selectedStockId'));
     }
+
+    // public function index()
+    // {
+    //     $stocks = Stock::with(['transactions' => function ($query) {
+    //         $query->orderBy('id', 'asc');
+    //     }])->get();
+
+    //     // Hitung ulang data total untuk setiap stock
+    //     $stocks->each(function ($stock) {
+    //         $stock->updateTotals();
+    //     });
+
+    //     return view('layout', compact('stocks'));
+    // }
 
     public function store(Request $request)
     {
