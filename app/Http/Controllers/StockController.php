@@ -36,25 +36,10 @@ class StockController extends Controller
         return view('home', compact('stocks', 'allStocks', 'selectedStockId'));
     }
 
-
-    // public function index()
-    // {
-    //     $stocks = Stock::with(['transactions' => function ($query) {
-    //         $query->orderBy('id', 'asc');
-    //     }])->get();
-
-    //     // Hitung ulang data total untuk setiap stock
-    //     $stocks->each(function ($stock) {
-    //         $stock->updateTotals();
-    //     });
-
-    //     return view('layout', compact('stocks'));
-    // }
-
     public function store(Request $request)
     {
         $stock = Stock::create($request->only('name'));
-        return redirect()->back()->with('success', 'Stock created successfully.');
+        return redirect()->route('stocks.index')->with('success', 'Stock created successfully.');
     }
 
     public function addTransaction(Request $request, Stock $stock)
@@ -88,26 +73,28 @@ class StockController extends Controller
             'sell_lot' => 'required|integer',
         ]);
 
+        $totalLotToSell = $validated['sell_lot'];
+        $totalProfit = 0;
+
         foreach ($validated['transaction_ids'] as $transactionId) {
             $transaction = $stock->transactions()->find($transactionId);
 
             if ($transaction && !$transaction->sell_date) {
-                $sellLot = $validated['sell_lot'];
-
-                if ($sellLot > $transaction->buy_lot) {
-                    return redirect()->back()->withErrors(['error' => 'Sell lot cannot exceed available lot.']);
-                }
+                $sellLot = min($transaction->buy_lot, $totalLotToSell);
 
                 $totalSellValue = $validated['sell_price'] * $sellLot * 100;
                 $sellFee = $totalSellValue * 0.0025; // Fee jual 0.25%
                 $totalSell = $totalSellValue - $sellFee;
 
                 $buyFee = $transaction->buy_price * $sellLot * 100 * 0.0015;
-                $totalInvestedForSoldLot = $transaction->buy_price * $sellLot * 100 + $buyFee;
-                $totalProfit = $totalSell - $totalInvestedForSoldLot;
+                $totalBuy = $transaction->buy_price * $sellLot * 100;
+                $totalInvestedForSoldLot = $totalBuy + $buyFee;
+                $profit = $totalSell - $totalInvestedForSoldLot;
 
-                // Perbarui transaksi yang tersisa
+                $totalProfit += $profit;
+
                 $remainingLot = $transaction->buy_lot - $sellLot;
+
                 if ($remainingLot > 0) {
                     $transaction->update([
                         'buy_lot' => $remainingLot,
@@ -123,8 +110,8 @@ class StockController extends Controller
                         'sell_price' => $validated['sell_price'],
                         'sell_lot' => $sellLot,
                         'total_sell'=> $totalSell,
-                        'total_profit' => $totalProfit,
-                        'profit_percentage' => ($totalProfit / $totalInvestedForSoldLot) * 100,
+                        'total_profit' => $profit,
+                        'profit_percentage' => ($profit / $totalInvestedForSoldLot) * 100,
                     ]);
                 } else {
                     $transaction->update([
@@ -132,19 +119,22 @@ class StockController extends Controller
                         'sell_price' => $validated['sell_price'],
                         'sell_lot' => $sellLot,
                         'total_sell'=> $totalSell,
-                        'total_profit' => $totalProfit,
-                        'profit_percentage' => ($totalProfit / $totalInvestedForSoldLot) * 100,
+                        'total_profit' => $profit,
+                        'profit_percentage' => ($profit / $totalInvestedForSoldLot) * 100,
                     ]);
                 }
+
+                $totalLotToSell -= $sellLot;
+                if ($totalLotToSell <= 0) break;
             }
         }
 
-        // Hitung ulang total
         $stock->refresh();
         $stock->updateTotals();
 
-        return redirect()->back()->with('success', 'Selected transactions processed successfully.');
+        return redirect()->back()->with('success', "Transactions processed. Total Profit: " . number_format($totalProfit, 2));
     }
+
 
     public function destroy($id)
     {

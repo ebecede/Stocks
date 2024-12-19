@@ -117,7 +117,14 @@
                                 <tr class="{{ $transaction->sell_date ? 'table-danger' : '' }}">
                                     <td>
                                         @if (!$transaction->sell_date)
-                                            <input type="checkbox" name="transaction_ids[]" value="{{ $transaction->id }}">
+                                            <input
+                                                type="checkbox"
+                                                name="transaction_ids[]"
+                                                value="{{ $transaction->id }}"
+                                                class="transaction-checkbox"
+                                                data-buy-price="{{ $transaction->buy_price }}"
+                                                data-buy-lot="{{ $transaction->buy_lot }}"
+                                            >
                                         @else
                                             Sold
                                         @endif
@@ -137,6 +144,13 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    <!-- Ringkasan Akumulasi -->
+                    <div id="transaction-summary" class="mt-3">
+                        <p>Total Selected Lot: <span id="total-selected-lot">0</span></p>
+                        <p>Total Selected Invested: <span id="total-selected-invested">0</span></p>
+                    </div>
+
                     <div class="d-flex">
                         {{ $stock->paginatedTransactions()->links() }}
                     </div>
@@ -180,4 +194,31 @@
 
     @endif
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll(".transaction-checkbox");
+    const totalLotElem = document.getElementById("total-selected-lot");
+    const totalInvestedElem = document.getElementById("total-selected-invested");
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", () => {
+            let totalLot = 0;
+            let totalInvested = 0;
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    const buyPrice = parseFloat(cb.dataset.buyPrice);
+                    const buyLot = parseInt(cb.dataset.buyLot);
+                    totalLot += buyLot;
+                    totalInvested += buyPrice * buyLot * 100;
+                }
+            });
+
+            totalLotElem.textContent = totalLot.toLocaleString();
+            totalInvestedElem.textContent = totalInvested.toLocaleString();
+        });
+    });
+});
+
+</script>
 @endsection
