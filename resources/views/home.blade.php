@@ -95,7 +95,7 @@
                         <thead>
                             <tr class="text-center">
                                 <th colspan="6" style="background-color: #cce5ff;">BUY</th>
-                                <th colspan="5" style="background-color: #f8d7da;">SELL</th>
+                                <th colspan="6" style="background-color: #f8d7da;">SELL</th>
                             </tr>
                             <tr class="table-info">
                                 <th>Select</th>
@@ -107,6 +107,7 @@
                                 <th>Sell Date</th>
                                 <th>Sell Price</th>
                                 <th>Sell Lot</th>
+                                <th>Total Sell</th>
                                 <th>Total Profit</th>
                                 <th>Profit (%)</th>
                             </tr>
@@ -129,6 +130,7 @@
                                     <td>{{ $transaction->sell_date ?? '-' }}</td>
                                     <td>{{ $transaction->sell_price ? number_format($transaction->sell_price, 2) : '-' }}</td>
                                     <td>{{ $transaction->sell_lot ?? '-' }}</td>
+                                    <td>{{ number_format($transaction->total_sell, 0) }}</td>
                                     <td>{{ $transaction->total_profit ? number_format($transaction->total_profit, 0) : '-' }}</td>
                                     <td>{{ $transaction->profit_percentage ? number_format($transaction->profit_percentage, 2) . '%' : '-' }}</td>
                                 </tr>

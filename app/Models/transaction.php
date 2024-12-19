@@ -19,6 +19,7 @@ class transaction extends Model
         'sell_date',
         'sell_price',
         'sell_lot',
+        'total_sell',
         'total_profit',
         'profit_percentage',
     ];

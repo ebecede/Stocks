@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('sell_date')->nullable();
             $table->decimal('sell_price', 15, 2)->nullable();
             $table->integer('sell_lot')->nullable();
+            $table->decimal('total_sell', 20, 2)->default(0);
             $table->decimal('total_profit', 20, 2)->nullable();
             $table->decimal('profit_percentage', 5, 2)->nullable();
             $table->timestamps();

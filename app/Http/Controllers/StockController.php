@@ -66,7 +66,8 @@ class StockController extends Controller
         ]);
 
         // Hitung total invested dengan Harga * Lot * 100
-        $totalInvested = $validated['buy_price'] * $validated['buy_lot'] * 100;
+        $buyFee = $validated['buy_price'] * $validated['buy_lot'] * 100 * 0.0015;
+        $totalInvested = ($validated['buy_price'] * $validated['buy_lot'] * 100) + $buyFee;
 
         $stock->transactions()->create([
             'buy_date' => $validated['buy_date'],
@@ -98,11 +99,15 @@ class StockController extends Controller
                 }
 
                 $totalSellValue = $validated['sell_price'] * $sellLot * 100;
-                $totalInvestedForSoldLot = $transaction->buy_price * $sellLot * 100;
-                $totalProfit = $totalSellValue - $totalInvestedForSoldLot;
+                $sellFee = $totalSellValue * 0.0025; // Fee jual 0.25%
+                $totalSell = $totalSellValue - $sellFee;
 
+                $buyFee = $transaction->buy_price * $sellLot * 100 * 0.0015;
+                $totalInvestedForSoldLot = $transaction->buy_price * $sellLot * 100 + $buyFee;
+                $totalProfit = $totalSell - $totalInvestedForSoldLot;
+
+                // Perbarui transaksi yang tersisa
                 $remainingLot = $transaction->buy_lot - $sellLot;
-
                 if ($remainingLot > 0) {
                     $transaction->update([
                         'buy_lot' => $remainingLot,
@@ -117,6 +122,7 @@ class StockController extends Controller
                         'sell_date' => $validated['sell_date'],
                         'sell_price' => $validated['sell_price'],
                         'sell_lot' => $sellLot,
+                        'total_sell'=> $totalSell,
                         'total_profit' => $totalProfit,
                         'profit_percentage' => ($totalProfit / $totalInvestedForSoldLot) * 100,
                     ]);
@@ -125,6 +131,7 @@ class StockController extends Controller
                         'sell_date' => $validated['sell_date'],
                         'sell_price' => $validated['sell_price'],
                         'sell_lot' => $sellLot,
+                        'total_sell'=> $totalSell,
                         'total_profit' => $totalProfit,
                         'profit_percentage' => ($totalProfit / $totalInvestedForSoldLot) * 100,
                     ]);

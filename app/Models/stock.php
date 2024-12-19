@@ -22,7 +22,8 @@ class stock extends Model
         $unsoldTransactions = $this->transactions()->whereNull('sell_date')->get();
 
         $this->total_invested = $unsoldTransactions->sum(function ($transaction) {
-            return $transaction->buy_price * $transaction->buy_lot * 100;
+            $buyFee = $transaction->buy_price * $transaction->buy_lot * 100 * 0.0015; // Fee beli 0.15%
+            return ($transaction->buy_price * $transaction->buy_lot * 100) + $buyFee;
         });
 
         $this->total_lot = $unsoldTransactions->sum('buy_lot');
