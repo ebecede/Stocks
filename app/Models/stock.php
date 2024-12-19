@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\Paginator;
 
 class stock extends Model
 {
@@ -37,6 +38,11 @@ class stock extends Model
         $this->average_profit_percentage = $averageProfit ?? 0;
 
         $this->save();
+    }
+
+    public function paginatedTransactions($perPage = 10)
+    {
+        return $this->transactions()->orderBy('id', 'asc')->paginate($perPage);
     }
 
 

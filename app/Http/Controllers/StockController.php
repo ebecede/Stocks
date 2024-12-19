@@ -10,18 +10,18 @@ class StockController extends Controller
     public function index(Request $request)
     {
         // Ambil ID saham yang dipilih dari request
-        $selectedStockId = $request->input('stock_id');
+        $selectedStockId = $request->input('name');
 
         if ($selectedStockId) {
             // Jika ada filter, ambil hanya saham yang dipilih
             $stocks = Stock::with(['transactions' => function ($query) {
-                $query->orderBy('id', 'asc');
+                $query->orderBy('id', 'asc')->paginate(10);
             }])->where('id', $selectedStockId)->get();
         } else {
             // Jika tidak ada filter, ambil semua saham
             $stocks = Stock::with(['transactions' => function ($query) {
-                $query->orderBy('id', 'asc');
-            }])->get();
+                $query->orderBy('id', 'asc')->paginate(10);
+            }])->orderBy('name', 'asc')->get();
         }
 
         // Hitung ulang data total untuk setiap stock
@@ -29,12 +29,13 @@ class StockController extends Controller
             $stock->updateTotals();
         });
 
-        // Ambil semua saham untuk dropdown
-        $allStocks = Stock::all();
+        // Ambil semua saham untuk dropdown, diurutkan berdasarkan nama
+        $allStocks = Stock::orderBy('name', 'asc')->get();
 
         // Kirim data saham yang terfilter dan semua saham untuk dropdown
-        return view('layout', compact('stocks', 'allStocks', 'selectedStockId'));
+        return view('home', compact('stocks', 'allStocks', 'selectedStockId'));
     }
+
 
     // public function index()
     // {
@@ -143,6 +144,7 @@ class StockController extends Controller
         $stock = Stock::findOrFail($id); // Cari saham berdasarkan ID
         $stock->delete(); // Hapus saham
 
-        return redirect()->back()->with('success', 'Stock deleted successfully.');
+        return redirect()->route('stocks.index')->with('success', 'Stock deleted successfully.');
     }
+
 }
