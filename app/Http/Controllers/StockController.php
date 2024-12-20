@@ -96,9 +96,11 @@ class StockController extends Controller
                 $remainingLot = $transaction->buy_lot - $sellLot;
 
                 if ($remainingLot > 0) {
+                    $originalTotalInvested = $transaction->total_invested; // Simpan total invested asli
+                    $remainingTotalInvested = $originalTotalInvested * ($remainingLot / $transaction->buy_lot); // Proporsional
                     $transaction->update([
                         'buy_lot' => $remainingLot,
-                        'total_invested' => $transaction->buy_price * $remainingLot * 100,
+                        'total_invested' => $remainingTotalInvested, // Tetap sertakan admin fee proporsional
                     ]);
 
                     $stock->transactions()->create([

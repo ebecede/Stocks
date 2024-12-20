@@ -180,7 +180,7 @@
                     <table class="table table-bordered" style="width: 48%">
                         <tr>
                             <td>TOTAL PROFIT</td>
-                            <td class="text-success fw-bold">{{ number_format($stock->total_profit, 0) }}</td>
+                            <td class="text-success fw-bold">{{ number_format($stock->total_profit, 2) }}</td>
                         </tr>
                         <tr>
                             <td>AVERAGE PROFIT (%)</td>
