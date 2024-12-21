@@ -1,25 +1,6 @@
 @extends('layout')
 
 @section('content')
-{{-- <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-                </div>
-            </div>
-        </div>
-    </div>
-</div> --}}
 <!-- Container -->
 <div class="container mt-4">
     <h1 class="mb-4">Stock Transactions</h1>
@@ -65,7 +46,7 @@
                 </form>
             </div>
 
-            <!-- Card Body & Footer Combined -->
+            <!-- Card Body -->
             <div class="card-body">
                 <!-- Form Tambah Transaksi Beli -->
                 <form action="{{ route('stocks.addTransaction', $stock->id) }}" method="POST" class="mb-3">
@@ -133,49 +114,28 @@
                                     <td>{{ $transaction->profit_percentage ? number_format($transaction->profit_percentage, 2) . '%' : '-' }}</td>
                                 </tr>
                             @endforeach
+                            <!-- Ringkasan Total di Baris Terakhir -->
+                            <tr class="fw-bold" style="background-color: #f0f8ff;">
+                                <td colspan="2">TOTAL INVESTED</td>
+                                <td>{{ number_format($stock->total_average) }}</td>
+                                <td>{{ number_format($stock->total_lot) }}</td>
+                                <td colspan="1"></td>
+                                <td>{{ number_format($stock->total_invested, 0) }}</td>
+                                <td colspan="3">TOTAL PROFIT</td>
+                                <td>{{ number_format($stock->total_profit, 0) }}</td>
+                                <td>{{ number_format($stock->average_profit_percentage, 2) }}%</td>
+                            </tr>
                         </tbody>
                     </table>
                     <div class="d-flex">
                         {{ $stock->paginatedTransactions()->links() }}
                     </div>
-
                 </form>
 
-
-                <!-- Ringkasan Total -->
-                <div class="d-flex justify-content-between" style="gap: 20px;">
-                    <!-- Tabel 1 -->
-                    <table class="table table-bordered" style="width: 48%">
-                        <tr>
-                            <td>TOTAL LOT</td>
-                            <td class="fw-bold">{{ $stock->total_lot }}</td>
-                        </tr>
-                        <tr>
-                            <td>TOTAL INVESTED</td>
-                            <td class="fw-bold">{{ number_format($stock->total_invested, 0) }}</td>
-                        </tr>
-                        <tr>
-                            <td>AVERAGE PRICE</td>
-                            <td class="fw-bold">{{ number_format($stock->total_average, 0) }}</td>
-                        </tr>
-                    </table>
-
-                    <!-- Tabel 2 -->
-                    <table class="table table-bordered" style="width: 48%">
-                        <tr>
-                            <td>TOTAL PROFIT</td>
-                            <td class="text-success fw-bold">{{ number_format($stock->total_profit, 0) }}</td>
-                        </tr>
-                        <tr>
-                            <td>AVERAGE PROFIT (%)</td>
-                            <td class="text-primary fw-bold">{{ number_format($stock->average_profit_percentage, 2) }}%</td>
-                        </tr>
-                    </table>
-                </div>
             </div>
+
         </div>
     @endforeach
-
     @endif
 </div>
 @endsection
