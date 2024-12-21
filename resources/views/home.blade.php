@@ -152,11 +152,11 @@
                         </tr>
                         <tr>
                             <td>TOTAL INVESTED</td>
-                            <td class="fw-bold">{{ number_format($stock->total_invested, 2) }}</td>
+                            <td class="fw-bold">{{ number_format($stock->total_invested, 0) }}</td>
                         </tr>
                         <tr>
                             <td>AVERAGE PRICE</td>
-                            <td class="fw-bold">{{ number_format($stock->total_average, 2) }}</td>
+                            <td class="fw-bold">{{ number_format($stock->total_average, 0) }}</td>
                         </tr>
                     </table>
 

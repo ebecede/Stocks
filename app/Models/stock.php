@@ -17,23 +17,27 @@ class stock extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    public function updateTotals()
+    public function updateTotals($isPurchase = false, $buyPrice = null, $buyLot = null)
     {
         $unsoldTransactions = $this->transactions()->whereNull('sell_date')->get();
 
-        $this->total_invested = $unsoldTransactions->sum(function ($transaction) {
-            return $transaction->buy_price * $transaction->buy_lot * 100;
-        });
+        // Jika pembelian, update total_average
+        if ($isPurchase && $buyPrice !== null && $buyLot !== null) {
+            $this->total_average = $this->total_lot > 0
+                ? (($this->total_average * $this->total_lot * 100) + ($buyPrice * $buyLot * 100)) / (($this->total_lot + $buyLot) * 100)
+                : $buyPrice;
+        }
 
+        // Hitung ulang total lot
         $this->total_lot = $unsoldTransactions->sum('buy_lot');
 
-        $this->total_average = $this->total_lot > 0
-            ? $this->total_invested / ($this->total_lot * 100)
-            : 0;
+        // Hitung total_invested menggunakan total_lot dan total_average
+        $this->total_invested = $this->total_lot * $this->total_average * 100;
 
+        // Total profit
         $this->total_profit = $this->transactions()->sum('total_profit');
 
-        // Tambahkan default 0 jika avg() menghasilkan null
+        // Rata-rata profit (default 0 jika null)
         $averageProfit = $this->transactions()->avg('profit_percentage');
         $this->average_profit_percentage = $averageProfit ?? 0;
 

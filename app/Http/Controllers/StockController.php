@@ -75,8 +75,13 @@ class StockController extends Controller
             'total_invested' => $totalInvested,
         ]);
 
+        // Perbarui total dan average price
+        $stock->refresh();
+        $stock->updateTotals(true, $validated['buy_price'], $validated['buy_lot']);
+
         return redirect()->back()->with('success', 'Transaction added successfully.');
     }
+
 
     public function sellSelectedTransaction(Request $request, Stock $stock)
     {
@@ -132,12 +137,13 @@ class StockController extends Controller
             }
         }
 
-        // Hitung ulang total
+        // Hitung ulang total tanpa memodifikasi average price
         $stock->refresh();
-        $stock->updateTotals();
+        $stock->updateTotals(false);
 
         return redirect()->back()->with('success', 'Selected transactions processed successfully.');
     }
+
 
     public function destroy($id)
     {
